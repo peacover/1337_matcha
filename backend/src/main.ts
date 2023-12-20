@@ -1,9 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableShutdownHooks();
+
+  const config = new DocumentBuilder()
+    .setTitle('Matcha API')
+    .setDescription('Matcha API description')
+    .setVersion('0.1')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  // app.enableShutdownHooks();
   await app.listen(3000, "0.0.0.0");
 }
 bootstrap();

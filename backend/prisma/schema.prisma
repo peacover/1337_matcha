@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String   @id @default(uuid())
+  email               String   @unique
+  username            String   @unique
+  password            String
+  firstName           String
+  lastName            String
+  gender              String
+  gender_preference   String?
+  biography           String?
+  interests           String[]
+  pictures            String[]
+  profilePictureIndex Int
+  age                 Int
+  status              String
+  ratings             Int[]
+  location            String
+
+  viewers         User[] @relation("Viewers")
+  viewersRelation User[] @relation("Viewers")
+
+  viewedBy         User[] @relation("ViewedBy")
+  viewedByRelation User[] @relation("ViewedBy")
+
+  likers         User[] @relation("Likers")
+  likersRelation User[] @relation("Likers")
+
+  liked         User[] @relation("Liked")
+  likedRelation User[] @relation("Liked")
+
+  // matches   User[]   @relation("Matches")
+  // matchesRelation User[] @relation("Matches")
+
+  // connected User[]   @relation("Connected")
+  // connectedRelation User[] @relation("Connected")
+
+  reported         User[] @relation("Reported")
+  reportedRelation User[] @relation("Reported")
+
+  blocked         User[] @relation("Blocked")
+  blockedRelation User[] @relation("Blocked")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Rooms     Room[]
+}
+
+model Room {
+  id String @id @default(uuid())
+
+  sender_id String
+  sender    User   @relation(fields: [sender_id], references: [id])
+
+  receiver_id String
+  receiver    User   @relation(fields: [receiver_id], references: [id])
+
+  sentMessages Message[]
+  receivedMessages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id      String @id @default(uuid())
+  room_id String
+  room    Room   @relation(fields: [room_id], references: [id])
+
+  content String
+  time    DateTime @default(now())
+}
